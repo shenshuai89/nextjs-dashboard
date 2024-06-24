@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CustomerField } from '@/app/lib/definitions';
 import Link from 'next/link';

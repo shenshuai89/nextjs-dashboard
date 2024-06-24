@@ -1,3 +1,4 @@
+'use client';
 import { lusitana } from '@/app/ui/fonts';
 import {
   AtSymbolIcon,
@@ -6,10 +7,29 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
+import * as yup from 'yup';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { authenticate } from '@/app/lib/actions';
 
+const FormSchema = yup.object().shape({
+  email: yup.string().email(),
+  password: yup.string().required(),
+});
 export default function LoginForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(FormSchema),
+  });
+  const formAction = async (data: any) => {
+    console.log('formAction', data);
+    await authenticate('', data);
+  };
   return (
-    <form className="space-y-3">
+    <form onSubmit={handleSubmit(formAction)} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -27,9 +47,9 @@ export default function LoginForm() {
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="email"
                 type="email"
-                name="email"
                 placeholder="Enter your email address"
                 required
+                {...register('email')}
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -46,10 +66,10 @@ export default function LoginForm() {
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="password"
                 type="password"
-                name="password"
                 placeholder="Enter password"
                 required
                 minLength={6}
+                {...register('password')}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -66,7 +86,7 @@ export default function LoginForm() {
 
 function LoginButton() {
   return (
-    <Button className="mt-4 w-full">
+    <Button type="submit" className="mt-4 w-full">
       Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
     </Button>
   );
